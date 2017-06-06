@@ -26,12 +26,20 @@ private:
     size_t count;
 
 public:
-    hashtable(size_t intialSize=8, double maxLoadFactor_=0.75):
+    hashtable(size_t initialSize=8, double maxLoadFactor_=0.75):
         maxLoadFactor(maxLoadFactor_),
-        maxCountToResize(static_cast<size_t>(intialSize*maxLoadFactor_)),
-        contents(TContents{intialSize}),
+        maxCountToResize(static_cast<size_t>(initialSize*maxLoadFactor_)),
+        contents(TContents{initialSize}),
         count(0u)
-    {}
+    {
+        if (maxLoadFactor < 0) {
+            throw std::logic_error("maxLoadFactor<0");
+        }
+
+        if (initialSize < 1) {
+            throw std::logic_error("initialSize<1");
+        }
+    }
 
     size_t calcHashCode(const TKey& arg) const {
         return (arg % contents.size());    
@@ -50,6 +58,7 @@ public:
                     );
                 }
         );
+        maxCountToResize*=2;
     }
 
 
