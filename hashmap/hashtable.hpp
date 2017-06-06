@@ -35,7 +35,8 @@ public:
     }
     
     void rehash() {
-        TContents oldContents = std::move(contents);
+        TContents oldContents = contents;
+        contents.clear();
         contents.reserve(2*oldContents.size());
         std::for_each(oldContents.begin(), oldContents.end(),
                 [this] (const TSlot& slot) {
@@ -58,11 +59,12 @@ public:
         THashEntry entry = THashEntry(key, val);
         if (result == entries.end()) {
             entries.emplace_front(entry);
+            ++count;
         } else {
             *result = entry;
         }
 
-        if (++count >= maxCountToResize) {
+        if (count >= maxCountToResize) {
             rehash();
         }
     }
