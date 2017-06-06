@@ -81,7 +81,7 @@ public:
         }
     }
 
-    const TVal get(TKey key) const {
+    const TVal get(const TKey& key) const {
         size_t hashCode = calcHashCode(key);
 
         auto& entries = contents[hashCode];
