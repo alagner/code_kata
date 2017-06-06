@@ -1,3 +1,5 @@
+#ifndef HASHTABLE_HPP
+#define HASHTABLE_HPP
 #include <cstddef>
 #include <algorithm>
 #include <vector>
@@ -107,3 +109,4 @@ public:
 }; //class hashtable
 
 }//namespace custmhashtable
+#endif //HASHTABLE_HPP
