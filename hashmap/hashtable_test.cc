@@ -4,7 +4,7 @@
 #include "hashtable.hpp"
 #include <cstdint>
 #include <boost/mpl/list.hpp>
-
+#include <vector>
 typedef boost::mpl::list<int, char, long, short > testTypes;
 
 template <typename T>
@@ -42,11 +42,18 @@ BOOST_AUTO_TEST_SUITE_END()
 template <typename T>
 struct HashMapFixtureForGetting {
     customHashtable::hashtable<T, std::uint16_t> ht;
+    std::vector<T> keys;
     HashMapFixtureForGetting() {
-        ht.put(140, 34);
-        ht.put(1, 34);
-        ht.put(10, 34);
-        ht.put(110, 34);
+        ht.put(120, 35);
+        ht.put(1, 32);
+        ht.put(10, 3);
+        ht.put(110, 4);
+        keys = {
+            static_cast<T>(1),
+            static_cast<T>(10),
+            static_cast<T>(110),
+            static_cast<T>(120)
+        };
     }
 };
 
@@ -55,7 +62,14 @@ BOOST_AUTO_TEST_SUITE(retrieveElements)
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(getExisting, T, testTypes) {
     HashMapFixtureForGetting<T> a;
-    BOOST_CHECK(a.ht.get(1) == 34);
+    BOOST_CHECK(a.ht.get(1) == 32);
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(getKeys, T, testTypes) {
+    HashMapFixtureForGetting<T> a;
+    std::vector<T> keys= a.ht.getKeys();
+    std::sort(keys.begin(), keys.end());
+    BOOST_CHECK(keys==a.keys);
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(getNonExisting, T, testTypes) {
