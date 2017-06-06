@@ -4,6 +4,7 @@
 #include <utility>
 #include <list>
 #include <vector>
+#include <stdexcept>
 
 namespace customHashtable 
 {
@@ -75,8 +76,7 @@ public:
         auto& entries = contents[hashCode];
         auto result = std::find_if(entries.begin(), entries.end(), [&key](const THashEntry& arg) {return arg.first == key;});
         if (result == entries.end()) {
-            //TODO what if empty?
-            throw 34;
+            throw std::logic_error("Tried to access nonexistant key"); 
         }
         return result->second;
     }
@@ -95,7 +95,7 @@ public:
         auto& entries = contents[calcHashCode(key)];
         auto it = std::remove_if(entries.begin(), entries.end(), [&key] (const THashEntry& x) { return x.first == key; });
         if (it == entries.end()) {
-            throw 35;//TODO specify exception here 
+            throw std::logic_error("Tried to remove nonexistant key");
         }
         entries.erase(it, entries.end());
         --count;
