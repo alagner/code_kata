@@ -1,15 +1,21 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE hashmap_test
 #include <boost/test/unit_test.hpp>
-#include "hashtable.hpp"
 #include <cstdint>
 #include <boost/mpl/list.hpp>
 #include <vector>
+
+#ifndef ADD_EXTRA_TEST_GETTERS
+#define ADD_EXTRA_TEST_GETTERS
+#include "THashtable.hpp"
+#endif //ADD_EXTRA_TEST_GETTERS
+
+
 typedef boost::mpl::list<int, char, long, short > testTypes;
 
 template <typename T>
 struct HashMapFixtureForAdding {
-    customHashtable::hashtable<T, std::uint16_t> ht;
+    customHashtable::THashtable<T, std::uint16_t> ht;
 };
 
 BOOST_AUTO_TEST_SUITE(putAndRetrieveElements)
@@ -41,7 +47,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 template <typename T>
 struct HashMapFixtureForGetting {
-    customHashtable::hashtable<T, std::uint16_t> ht;
+    customHashtable::THashtable<T, std::uint16_t> ht;
     std::vector<T> keys;
     HashMapFixtureForGetting() {
         ht.put(120, 35);
@@ -81,7 +87,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 template <typename T>
 struct HashMapFixtureForRemoval {
-    customHashtable::hashtable<T, std::uint16_t> ht;
+    customHashtable::THashtable<T, std::uint16_t> ht;
     HashMapFixtureForRemoval() {
         ht.put(140, 34);
         ht.put(1, 34);
@@ -117,13 +123,13 @@ template <typename T>
 struct wrongHT { 
         wrongHT() {}
         static auto createWrongHTNegativeFactor() {
-            customHashtable::hashtable<T, std::uint16_t> ht(8,-2); 
+            customHashtable::THashtable<T, std::uint16_t> ht(8,-2); 
             return ht;
         }
 
 
         static auto createWrongHTSizeZero() {
-            customHashtable::hashtable<T, std::uint16_t> ht(0,1); 
+            customHashtable::THashtable<T, std::uint16_t> ht(0,1); 
             return ht;
         }
 };
@@ -139,3 +145,46 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(throwWhenSizeZero, T, testTypes) {
 }
     
 BOOST_AUTO_TEST_SUITE_END()
+
+template <typename T>
+struct HashMapFixtureForRehash { 
+    customHashtable::THashtable<T, std::uint16_t> ht; 
+    void addSixElements() {
+        for (size_t i=0; i < 6; ++i) {
+            ht.put(i, i*2);
+        }
+    }
+    void addAnotherSixElements() {
+        for (size_t i=6; i < 12; ++i) {
+            ht.put(i, i*2);
+        }
+    }
+
+};
+
+BOOST_AUTO_TEST_SUITE(rehashingAndResizing)
+
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(resizeOnAddition, T, testTypes) {
+    HashMapFixtureForRehash<T> a;
+    BOOST_CHECK(a.ht.getMaxCurrentSize() ==8);
+    a.addSixElements();
+    BOOST_CHECK(a.ht.getMaxCurrentSize() ==16);
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(resizeMoreOnAddition, T, testTypes) {
+    HashMapFixtureForRehash<T> a;
+    BOOST_CHECK(a.ht.getMaxCurrentSize() == 8);
+    a.addSixElements();
+    a.addSixElements();
+    BOOST_CHECK(a.ht.getMaxCurrentSize() == 16);
+    a.addAnotherSixElements();
+    BOOST_CHECK(a.ht.getMaxCurrentSize() == 32);
+}
+
+    
+BOOST_AUTO_TEST_SUITE_END()
+
+#ifdef ADD_EXTRA_TEST_GETTERS
+#undef ADD_EXTRA_TEST_GETTERS
+#endif //ADD_EXTRA_TEST_GETTERS

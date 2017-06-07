@@ -8,11 +8,12 @@
 #include <vector>
 #include <stdexcept>
 
+
 namespace customHashtable 
 {
 
 template <typename TKey, typename TVal>
-class hashtable 
+class THashtable 
 {
 
 using THashEntry = std::pair<TKey, TVal>;
@@ -21,12 +22,14 @@ using TContents = std::vector<TSlot>;
 
 private:
     TContents contents;
+    size_t maxCurrentSize;
     size_t maxCountToResize;
     const double maxLoadFactor;
     size_t count;
 
 public:
-    hashtable(size_t initialSize=8, double maxLoadFactor_=0.75):
+    THashtable(size_t initialSize=8, double maxLoadFactor_=0.75):
+        maxCurrentSize(initialSize),
         maxLoadFactor(maxLoadFactor_),
         maxCountToResize(static_cast<size_t>(initialSize*maxLoadFactor_)),
         contents(TContents{initialSize}),
@@ -42,13 +45,15 @@ public:
     }
 
     size_t calcHashCode(const TKey& arg) const {
-        return (arg % contents.size());    
+        return (arg % maxCurrentSize);    
     }
     
     void rehash() {
+        count = 0;
+        maxCountToResize*=2;
         TContents oldContents = contents;
-        contents.clear();
-        contents.reserve(2*oldContents.size());
+        contents=std::move(TContents(maxCurrentSize*=2));
+        std::fill(contents.begin(), contents.end(), TSlot{});
         std::for_each(oldContents.begin(), oldContents.end(),
                 [this] (const TSlot& slot) {
                     std::for_each(slot.begin(), slot.end(),
@@ -58,10 +63,24 @@ public:
                     );
                 }
         );
-        maxCountToResize*=2;
     }
 
+#ifdef ADD_EXTRA_TEST_GETTERS
+public:
 
+    size_t getMaxCountToResize() const {
+        return maxCountToResize;
+    }
+
+    size_t getMaxCurrentSize() const {
+        return maxCurrentSize;
+    }
+
+    size_t getCurrentCount() const {
+        return count;
+    }
+
+#endif //ADD_EXTRA_TEST_GETTERS
 
 public:
     void put(const TKey& key, const TVal& val) {
@@ -102,7 +121,8 @@ public:
         return ret;
     }
 
-    void remove(TKey key) {
+    void
+    remove(TKey key) {
         auto& entries = contents[calcHashCode(key)];
         auto it = std::remove_if(entries.begin(), entries.end(), [&key] (const THashEntry& x) { return x.first == key; });
         if (it == entries.end()) {
