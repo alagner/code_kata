@@ -76,9 +76,6 @@ public:
         return maxCurrentSize;
     }
 
-    size_t getCurrentCount() const {
-        return count;
-    }
 
 #endif //ADD_EXTRA_TEST_GETTERS
 
@@ -100,7 +97,9 @@ public:
         }
     }
 
-    const TVal get(const TKey& key) const {
+    
+    
+    TVal get(const TKey& key) const {
         size_t hashCode = calcHashCode(key);
 
         auto& entries = contents[hashCode];
@@ -111,7 +110,7 @@ public:
         return result->second;
     }
 
-    const std::vector<TKey> getKeys () const {
+    std::vector<TKey> getKeys () const {
         std::vector<TKey> ret {};
         for (const auto& el : contents) {
             if (!el.empty()) {
@@ -135,7 +134,18 @@ public:
     size_t size() {
         return count;
     }
-}; //class hashtable
+
+    bool keyExists(const TKey& key) const {
+        
+        auto keys = getKeys();
+        return std::find_if(
+                keys.begin(),
+                keys.end(),
+                [&key](const TKey& entry) {
+                    return key == entry;
+                }) != keys.end();
+    }
+}; //class customHashtable
 
 }//namespace custmhashtable
 #endif //HASHTABLE_HPP

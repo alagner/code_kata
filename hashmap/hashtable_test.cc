@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(emptyOnCreation, T, testTypes) {
 }
 
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(addAndReplaceElements, T, testTypes) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(addReplaceElementsAndCheckExistence, T, testTypes) {
     HashMapFixtureForAdding<T> a;
     a.ht.put(10, 34);
     BOOST_CHECK(a.ht.size() == 1);
@@ -41,6 +41,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(addAndReplaceElements, T, testTypes) {
 
     a.ht.put(1, 6);
     BOOST_CHECK(a.ht.size() == 3);
+
+
+    BOOST_CHECK(a.ht.keyExists(10));
+    BOOST_CHECK(a.ht.keyExists(140));
+    BOOST_CHECK(a.ht.keyExists(1));
+    BOOST_CHECK(!a.ht.keyExists(6));
+    BOOST_CHECK(!a.ht.keyExists(8));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -107,9 +114,19 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(decrementOnElementDeletion, T, testTypes){
 
     a.ht.remove(1);
     BOOST_CHECK(a.ht.size() == 3);
-    
+    BOOST_CHECK(!a.ht.keyExists(1));
+    BOOST_CHECK(a.ht.keyExists(10));
+    BOOST_CHECK(a.ht.keyExists(110));
+    BOOST_CHECK(a.ht.keyExists(140));
+
     a.ht.remove(140);
     BOOST_CHECK(a.ht.size() == 2);
+    BOOST_CHECK(!a.ht.keyExists(1));
+    BOOST_CHECK(!a.ht.keyExists(140));
+    BOOST_CHECK(a.ht.keyExists(10));
+    BOOST_CHECK(a.ht.keyExists(110));
+
+
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(getNonExisting, T, testTypes) {
@@ -170,6 +187,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(resizeOnAddition, T, testTypes) {
     BOOST_CHECK(a.ht.getMaxCurrentSize() ==8);
     a.addSixElements();
     BOOST_CHECK(a.ht.getMaxCurrentSize() ==16);
+    BOOST_CHECK(a.ht.keyExists(0));
+    BOOST_CHECK(a.ht.keyExists(1));
+    BOOST_CHECK(a.ht.keyExists(2));
+    BOOST_CHECK(a.ht.keyExists(3));
+    BOOST_CHECK(a.ht.keyExists(4));
+    BOOST_CHECK(a.ht.keyExists(5));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(resizeMoreOnAddition, T, testTypes) {
@@ -177,9 +200,28 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(resizeMoreOnAddition, T, testTypes) {
     BOOST_CHECK(a.ht.getMaxCurrentSize() == 8);
     a.addSixElements();
     a.addSixElements();
+    BOOST_CHECK(a.ht.keyExists(0));
+    BOOST_CHECK(a.ht.keyExists(1));
+    BOOST_CHECK(a.ht.keyExists(2));
+    BOOST_CHECK(a.ht.keyExists(3));
+    BOOST_CHECK(a.ht.keyExists(4));
+    BOOST_CHECK(a.ht.keyExists(5));
     BOOST_CHECK(a.ht.getMaxCurrentSize() == 16);
     a.addAnotherSixElements();
     BOOST_CHECK(a.ht.getMaxCurrentSize() == 32);
+    BOOST_CHECK(a.ht.keyExists(0));
+    BOOST_CHECK(a.ht.keyExists(1));
+    BOOST_CHECK(a.ht.keyExists(2));
+    BOOST_CHECK(a.ht.keyExists(3));
+    BOOST_CHECK(a.ht.keyExists(4));
+    BOOST_CHECK(a.ht.keyExists(5));
+    BOOST_CHECK(a.ht.keyExists(6));
+    BOOST_CHECK(a.ht.keyExists(7));
+    BOOST_CHECK(a.ht.keyExists(8));
+    BOOST_CHECK(a.ht.keyExists(9));
+    BOOST_CHECK(a.ht.keyExists(10));
+    BOOST_CHECK(a.ht.keyExists(11));
+
 }
 
     
