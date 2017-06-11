@@ -110,16 +110,15 @@ public:
 
     std::vector<TKey> getKeys () const {
         std::vector<TKey> ret {};
-        for (const auto& el : contents) {
-            if (!el.empty()) {
-                std::for_each(el.begin(), el.end(), [&ret] (const auto& el) { ret.push_back(el.first); });
+        for (const auto& slot : contents) {
+            if (!slot.empty()) {
+                std::for_each(slot.begin(), slot.end(), [&ret] (const auto& entry) { ret.push_back(entry.first); });
             }
         }
         return ret;
     }
 
-    void
-    remove(TKey key) {
+    void remove(TKey key) {
         auto& entries = contents[calculateHashCode(key)];
         auto it = std::remove_if(entries.begin(), entries.end(), [&key] (const THashEntry& x) { return x.first == key; });
         if (it == entries.end()) {
