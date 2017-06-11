@@ -7,7 +7,10 @@
 
 #ifndef ADD_EXTRA_TEST_GETTERS
 #define ADD_EXTRA_TEST_GETTERS
+#endif //ADD_EXTRA_TEST_GETTERS
 #include "THashtable.hpp"
+#ifdef ADD_EXTRA_TEST_GETTERS
+#undef ADD_EXTRA_TEST_GETTERS
 #endif //ADD_EXTRA_TEST_GETTERS
 
 
@@ -41,6 +44,25 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(addReplaceElementsAndCheckExistence, T, testTypes)
 
     a.ht.put(1, 6);
     BOOST_CHECK(a.ht.size() == 3);
+}
+
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(noKeysInNewMap, T, testTypes) {
+    HashMapFixtureForAdding<T> a;
+    BOOST_CHECK(!a.ht.keyExists(10));
+    BOOST_CHECK(!a.ht.keyExists(140));
+    BOOST_CHECK(!a.ht.keyExists(1));
+    BOOST_CHECK(!a.ht.keyExists(6));
+    BOOST_CHECK(!a.ht.keyExists(8));
+}
+
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(addReplaceElementsAndCheckKeyExistence, T, testTypes) {
+    HashMapFixtureForAdding<T> a;
+    a.ht.put(10, 34);
+    a.ht.put(140, 4);
+    a.ht.put(1, 5);
+    a.ht.put(1, 6);
 
 
     BOOST_CHECK(a.ht.keyExists(10));
@@ -49,6 +71,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(addReplaceElementsAndCheckExistence, T, testTypes)
     BOOST_CHECK(!a.ht.keyExists(6));
     BOOST_CHECK(!a.ht.keyExists(8));
 }
+
 
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -133,6 +156,33 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(getNonExisting, T, testTypes) {
     HashMapFixtureForRemoval<T> a;
     BOOST_CHECK_THROW(a.ht.remove(50), std::logic_error);
 }
+
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(noKeyAfterRemoval, T, testTypes) {
+    HashMapFixtureForRemoval<T> a;
+
+    BOOST_CHECK(a.ht.size() == 4);
+
+    BOOST_CHECK(a.ht.keyExists(1));
+    BOOST_CHECK(a.ht.keyExists(10));
+    BOOST_CHECK(a.ht.keyExists(110));
+    BOOST_CHECK(a.ht.keyExists(140));
+
+
+    a.ht.remove(1);
+    BOOST_CHECK(!a.ht.keyExists(1));
+    BOOST_CHECK(a.ht.keyExists(10));
+    BOOST_CHECK(a.ht.keyExists(110));
+    BOOST_CHECK(a.ht.keyExists(140));
+
+    a.ht.remove(140);
+    BOOST_CHECK(!a.ht.keyExists(1));
+    BOOST_CHECK(!a.ht.keyExists(140));
+    BOOST_CHECK(a.ht.keyExists(10));
+    BOOST_CHECK(a.ht.keyExists(110));
+
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
 
@@ -227,6 +277,4 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(resizeMoreOnAddition, T, testTypes) {
     
 BOOST_AUTO_TEST_SUITE_END()
 
-#ifdef ADD_EXTRA_TEST_GETTERS
-#undef ADD_EXTRA_TEST_GETTERS
-#endif //ADD_EXTRA_TEST_GETTERS
+
