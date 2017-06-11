@@ -184,9 +184,9 @@ BOOST_AUTO_TEST_SUITE(rehashingAndResizing)
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(resizeOnAddition, T, testTypes) {
     HashMapFixtureForRehash<T> a;
-    BOOST_CHECK(a.ht.getMaxCurrentSize() ==8);
+    BOOST_CHECK(a.ht.getCurrentMaxSize() ==8);
     a.addSixElements();
-    BOOST_CHECK(a.ht.getMaxCurrentSize() ==16);
+    BOOST_CHECK(a.ht.getCurrentMaxSize() ==16);
     BOOST_CHECK(a.ht.keyExists(0));
     BOOST_CHECK(a.ht.keyExists(1));
     BOOST_CHECK(a.ht.keyExists(2));
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(resizeOnAddition, T, testTypes) {
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(resizeMoreOnAddition, T, testTypes) {
     HashMapFixtureForRehash<T> a;
-    BOOST_CHECK(a.ht.getMaxCurrentSize() == 8);
+    BOOST_CHECK(a.ht.getCurrentMaxSize() == 8);
     a.addSixElements();
     a.addSixElements();
     BOOST_CHECK(a.ht.keyExists(0));
@@ -206,9 +206,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(resizeMoreOnAddition, T, testTypes) {
     BOOST_CHECK(a.ht.keyExists(3));
     BOOST_CHECK(a.ht.keyExists(4));
     BOOST_CHECK(a.ht.keyExists(5));
-    BOOST_CHECK(a.ht.getMaxCurrentSize() == 16);
+    BOOST_CHECK(a.ht.getCurrentMaxSize() == 16);
     a.addAnotherSixElements();
-    BOOST_CHECK(a.ht.getMaxCurrentSize() == 32);
+    BOOST_CHECK(a.ht.getCurrentMaxSize() == 32);
     BOOST_CHECK(a.ht.keyExists(0));
     BOOST_CHECK(a.ht.keyExists(1));
     BOOST_CHECK(a.ht.keyExists(2));

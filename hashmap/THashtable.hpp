@@ -22,14 +22,14 @@ using TContents = std::vector<TSlot>;
 
 private:
     TContents contents;
-    size_t maxCurrentSize;
+    size_t currentMaxSize;
     size_t maxCountToResize;
     const double maxLoadFactor;
     size_t count;
 
 public:
     THashtable(size_t initialSize=8, double maxLoadFactor_=0.75):
-        maxCurrentSize(initialSize),
+        currentMaxSize(initialSize),
         maxLoadFactor(maxLoadFactor_),
         maxCountToResize(static_cast<size_t>(initialSize*maxLoadFactor_)),
         contents(TContents{initialSize}),
@@ -45,14 +45,14 @@ public:
     }
 
     size_t calcHashCode(const TKey& arg) const {
-        return (arg % maxCurrentSize);    
+        return (arg % currentMaxSize);    
     }
     
     void rehash() {
         count = 0;
         maxCountToResize*=2;
         TContents oldContents = contents;
-        contents=std::move(TContents(maxCurrentSize*=2));
+        contents=std::move(TContents(currentMaxSize*=2));
         std::fill(contents.begin(), contents.end(), TSlot{});
         std::for_each(oldContents.begin(), oldContents.end(),
                 [this] (const TSlot& slot) {
@@ -72,8 +72,8 @@ public:
         return maxCountToResize;
     }
 
-    size_t getMaxCurrentSize() const {
-        return maxCurrentSize;
+    size_t getCurrentMaxSize() const {
+        return currentMaxSize;
     }
 
 
