@@ -45,14 +45,15 @@ public:
     }
 
     size_t calculateHashCode(const TKey& arg) const {
-        return (arg % currentMaxSize);    
+        return arg % currentMaxSize;    
     }
     
     void rehash() {
         count = 0;
-        maxCountToResize*=2;
+        currentMaxSize *= 2;
+        maxCountToResize *= 2;
         TContents oldContents = contents;
-        contents=std::move(TContents(currentMaxSize*=2));
+        contents=std::move(TContents(currentMaxSize));
         std::fill(contents.begin(), contents.end(), TSlot{});
         std::for_each(oldContents.begin(), oldContents.end(),
                 [this] (const TSlot& slot) {
@@ -81,8 +82,7 @@ public:
 
 public:
     void put(const TKey& key, const TVal& val) {
-        size_t hashCode = calculateHashCode(key);
-        auto& entries = contents[hashCode];
+        auto& entries = contents[calculateHashCode(key)];
         auto result = std::find_if(entries.begin(), entries.end(), [&key](const THashEntry& arg) {return arg.first == key;});
         THashEntry entry = THashEntry(key, val);
         if (result == entries.end()) {
@@ -100,9 +100,7 @@ public:
     
     
     TVal get(const TKey& key) const {
-        size_t hashCode = calculateHashCode(key);
-
-        auto& entries = contents[hashCode];
+        auto& entries = contents[calculateHashCode(key)];
         auto result = std::find_if(entries.begin(), entries.end(), [&key](const THashEntry& arg) {return arg.first == key;});
         if (result == entries.end()) {
             throw std::logic_error("Tried to access nonexistant key"); 
