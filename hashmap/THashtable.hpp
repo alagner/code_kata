@@ -82,14 +82,14 @@ public:
 
 public:
     void put(const TKey& key, const TVal& val) {
-        auto& entries = contents[calculateHashCode(key)];
-        auto result = std::find_if(entries.begin(), entries.end(), [&key](const THashEntry& arg) {return arg.first == key;});
-        THashEntry entry = THashEntry(key, val);
-        if (result == entries.end()) {
-            entries.emplace_front(entry);
+        auto& hashSlot = contents[calculateHashCode(key)];
+        auto entry = std::find_if(hashSlot.begin(), hashSlot.end(), [&key](const THashEntry& arg) {return arg.first == key;});
+        THashEntry newEntry = THashEntry(key, val);
+        if (entry == hashSlot.end()) {
+            hashSlot.emplace_front(newEntry);
             ++count;
         } else {
-            *result = entry;
+            *entry = newEntry;
         }
 
         if (count >= maxCountToResize) {
@@ -100,12 +100,12 @@ public:
     
     
     TVal get(const TKey& key) const {
-        auto& entries = contents[calculateHashCode(key)];
-        auto result = std::find_if(entries.begin(), entries.end(), [&key](const THashEntry& arg) {return arg.first == key;});
-        if (result == entries.end()) {
+        auto& hashSlot = contents[calculateHashCode(key)];
+        auto entry = std::find_if(hashSlot.begin(), hashSlot.end(), [&key](const THashEntry& arg) {return arg.first == key;});
+        if (entry == hashSlot.end()) {
             throw std::logic_error("Tried to access nonexistant key"); 
         }
-        return result->second;
+        return entry->second;
     }
 
     std::vector<TKey> getKeys () const {
