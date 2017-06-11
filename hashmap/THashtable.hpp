@@ -44,7 +44,7 @@ public:
         }
     }
 
-    size_t calcHashCode(const TKey& arg) const {
+    size_t calculateHashCode(const TKey& arg) const {
         return (arg % currentMaxSize);    
     }
     
@@ -81,7 +81,7 @@ public:
 
 public:
     void put(const TKey& key, const TVal& val) {
-        size_t hashCode = calcHashCode(key);
+        size_t hashCode = calculateHashCode(key);
         auto& entries = contents[hashCode];
         auto result = std::find_if(entries.begin(), entries.end(), [&key](const THashEntry& arg) {return arg.first == key;});
         THashEntry entry = THashEntry(key, val);
@@ -100,7 +100,7 @@ public:
     
     
     TVal get(const TKey& key) const {
-        size_t hashCode = calcHashCode(key);
+        size_t hashCode = calculateHashCode(key);
 
         auto& entries = contents[hashCode];
         auto result = std::find_if(entries.begin(), entries.end(), [&key](const THashEntry& arg) {return arg.first == key;});
@@ -122,7 +122,7 @@ public:
 
     void
     remove(TKey key) {
-        auto& entries = contents[calcHashCode(key)];
+        auto& entries = contents[calculateHashCode(key)];
         auto it = std::remove_if(entries.begin(), entries.end(), [&key] (const THashEntry& x) { return x.first == key; });
         if (it == entries.end()) {
             throw std::logic_error("Tried to remove nonexistant key");
