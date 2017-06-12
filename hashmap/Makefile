@@ -1,19 +1,19 @@
 CC=gcc
-CPP=g++
+CXX=g++
 
 CDEFS=
-CPPDEFS=-DADD_EXTRA_TEST_GETTERS
+CXXDEFS=-DADD_EXTRA_TEST_GETTERS
 DEPS = THashtable.hpp
 OBJ = hashtable_test.o
 CFLAGS=
-CPPFLAGS= -ggdb3 -std=c++14 $(CPPDEFS)
+CXXFLAGS= -ggdb3 -std=c++14 $(CXXDEFS)
 LIBS = -lboost_unit_test_framework
 
 %.o :  %.cc $(DEPS)
-	$(CPP) -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
+	$(CXX) -c -o $@ $< $(CFLAGS) $(CXXFLAGS)
 
 test: $(OBJ)
-	g++ -o $@ $^ $(CPPFLAGS) $(LIBS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 
 all: clean test
 
